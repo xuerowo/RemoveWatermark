@@ -1,0 +1,438 @@
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>去水印編輯工作台</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/static/assets/app-icon-32.png?v=20260526-white-sun" />
+    <link rel="shortcut icon" type="image/png" href="/static/assets/app-icon-32.png?v=20260526-white-sun" />
+    <link rel="apple-touch-icon" sizes="192x192" href="/static/assets/app-icon-192.png?v=20260526-white-sun" />
+  </head>
+  <body>
+    <svg class="icon-sprite" aria-hidden="true">
+      <symbol id="icon-folder-open" viewBox="0 0 24 24">
+        <path d="M3 7.5h6l2 2h10v8.5a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z" />
+        <path d="M3 7.5V6a2 2 0 0 1 2-2h4.5l2 2H19a2 2 0 0 1 2 2v1.5" />
+      </symbol>
+      <symbol id="icon-chevron-left" viewBox="0 0 24 24">
+        <path d="m15 18-6-6 6-6" />
+      </symbol>
+      <symbol id="icon-chevron-right" viewBox="0 0 24 24">
+        <path d="m9 6 6 6-6 6" />
+      </symbol>
+      <symbol id="icon-plus" viewBox="0 0 24 24">
+        <path d="M12 5v14M5 12h14" />
+      </symbol>
+      <symbol id="icon-trash" viewBox="0 0 24 24">
+        <path d="M4 7h16M10 11v6M14 11v6M9 7l1-3h4l1 3M6 7l1 14h10l1-14" />
+      </symbol>
+      <symbol id="icon-crosshair" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="6" />
+        <path d="M12 2v4M12 18v4M2 12h4M18 12h4" />
+      </symbol>
+      <symbol id="icon-sparkles" viewBox="0 0 24 24">
+        <path d="M12 3l1.7 5.2L19 10l-5.3 1.8L12 17l-1.7-5.2L5 10l5.3-1.8Z" />
+        <path d="M19 15l.7 2.1L22 18l-2.3.9L19 21l-.7-2.1L16 18l2.3-.9Z" />
+      </symbol>
+      <symbol id="icon-download" viewBox="0 0 24 24">
+        <path d="M12 3v11" />
+        <path d="m7 9 5 5 5-5" />
+        <path d="M5 19h14" />
+      </symbol>
+      <symbol id="icon-layers" viewBox="0 0 24 24">
+        <path d="m12 3 9 5-9 5-9-5Z" />
+        <path d="m5 12 7 4 7-4M5 16l7 4 7-4" />
+      </symbol>
+      <symbol id="icon-split" viewBox="0 0 24 24">
+        <path d="M4 5h16v14H4Z" />
+        <path d="M12 5v14" />
+      </symbol>
+      <symbol id="icon-image" viewBox="0 0 24 24">
+        <path d="M4 5h16v14H4Z" />
+        <circle cx="9" cy="10" r="1.5" />
+        <path d="m6 17 4.5-4 3 3 2-2 2.5 3" />
+      </symbol>
+      <symbol id="icon-image-check" viewBox="0 0 24 24">
+        <path d="M4 5h16v14H4Z" />
+        <path d="m7 15 3-3 2 2 1.5-1.5" />
+        <path d="m15 14 1.5 1.5L20 12" />
+      </symbol>
+      <symbol id="icon-brush" viewBox="0 0 24 24">
+        <path d="M14 4 20 10 10 20H4v-6Z" />
+        <path d="m14 4 6 6" />
+      </symbol>
+      <symbol id="icon-eraser" viewBox="0 0 24 24">
+        <path d="m4 15 8-8a3 3 0 0 1 4.2 0l3.8 3.8-8 8H7.2Z" />
+        <path d="M11 20h9M9 10l6 6" />
+      </symbol>
+      <symbol id="icon-restore" viewBox="0 0 24 24">
+        <path d="M3 12a9 9 0 1 0 3-6.7" />
+        <path d="M3 5v7h7" />
+        <path d="M12 7v5l3 2" />
+      </symbol>
+      <symbol id="icon-template" viewBox="0 0 24 24">
+        <path d="M7 4h10v5H7Z" />
+        <path d="M5 13h14v7H5Z" />
+        <path d="M9 13v-3h6v3" />
+      </symbol>
+      <symbol id="icon-clear" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="8" />
+        <path d="m9 9 6 6M15 9l-6 6" />
+      </symbol>
+      <symbol id="icon-zoom-in" viewBox="0 0 24 24">
+        <circle cx="11" cy="11" r="7" />
+        <path d="M11 8v6M8 11h6M16.5 16.5 21 21" />
+      </symbol>
+      <symbol id="icon-zoom-out" viewBox="0 0 24 24">
+        <circle cx="11" cy="11" r="7" />
+        <path d="M8 11h6M16.5 16.5 21 21" />
+      </symbol>
+      <symbol id="icon-save" viewBox="0 0 24 24">
+        <path d="M5 3h12l2 2v16H5Z" />
+        <path d="M8 3v6h8V3" />
+        <path d="M8 15h8v6H8Z" />
+      </symbol>
+    </svg>
+    <div class="app-shell">
+      <header class="topbar">
+        <div class="brand">
+          <img class="brand-mark" src="/static/assets/app-icon-64.png?v=20260526-white-sun" width="34" height="34" alt="" />
+          <div>
+            <strong>去水印編輯工作台</strong>
+          </div>
+        </div>
+        <div class="path-controls">
+          <label>
+            <span>圖片</span>
+            <input id="inputPath" type="text" spellcheck="false" />
+          </label>
+          <label>
+            <span>模板</span>
+            <input id="templatePath" type="text" spellcheck="false" />
+          </label>
+          <label>
+            <span>輸出</span>
+            <input id="outputPath" type="text" spellcheck="false" />
+          </label>
+          <button id="loadWorkspace" class="primary has-icon" title="套用目前輸入、模板與輸出路徑"><svg class="button-icon" aria-hidden="true"><use href="#icon-folder-open"></use></svg>載入</button>
+        </div>
+      </header>
+
+      <nav class="commandbar" aria-label="主要操作">
+        <div class="commandbar-group nav-actions" aria-label="圖片切換">
+          <button id="prevImage" class="has-icon" title="切換到上一張圖片"><svg class="button-icon" aria-hidden="true"><use href="#icon-chevron-left"></use></svg>上一張</button>
+          <button id="nextImage" class="has-icon" title="切換到下一張圖片">下一張<svg class="button-icon" aria-hidden="true"><use href="#icon-chevron-right"></use></svg></button>
+        </div>
+        <div class="commandbar-group current-actions" aria-label="目前圖片操作">
+          <button id="detectImage" class="accent has-icon" title="偵測目前圖片的水印位置並建立遮罩"><svg class="button-icon" aria-hidden="true"><use href="#icon-crosshair"></use></svg>偵測</button>
+          <button id="processImage" class="danger has-icon" title="使用目前遮罩去除目前圖片的水印"><svg class="button-icon" aria-hidden="true"><use href="#icon-sparkles"></use></svg>去水印</button>
+          <button id="detectProcessImage" class="danger has-icon" title="一鍵完成目前圖片的偵測與去水印"><svg class="button-icon" aria-hidden="true"><use href="#icon-sparkles"></use></svg>一鍵去水印</button>
+          <button id="downloadImage" class="ghost has-icon" title="下載目前圖片已產生的去水印結果"><svg class="button-icon" aria-hidden="true"><use href="#icon-download"></use></svg>下載目前圖片</button>
+        </div>
+        <div class="commandbar-group edit-actions" aria-label="編輯控制">
+          <button id="cancelProcessing" class="ghost has-icon" title="中斷目前處理並清空等待佇列"><svg class="button-icon" aria-hidden="true"><use href="#icon-clear"></use></svg>中斷處理</button>
+        </div>
+        <div class="commandbar-group batch-actions" aria-label="批量操作">
+          <button id="batchDetect" class="ghost has-icon" title="偵測全部圖片並更新各自遮罩"><svg class="button-icon" aria-hidden="true"><use href="#icon-layers"></use></svg>批量偵測</button>
+          <button id="batchProcess" class="ghost has-icon" title="使用每張圖片已儲存的遮罩批量去水印"><svg class="button-icon" aria-hidden="true"><use href="#icon-sparkles"></use></svg>批量去水印</button>
+          <button id="batchDetectProcess" class="ghost has-icon" title="一鍵完成全部圖片的批量偵測與批量去水印"><svg class="button-icon" aria-hidden="true"><use href="#icon-sparkles"></use></svg>批量一鍵去水印</button>
+          <button id="downloadAllImages" class="ghost has-icon" title="把所有已產生的去水印結果打包成 ZIP 壓縮包"><svg class="button-icon" aria-hidden="true"><use href="#icon-download"></use></svg>下載全部圖片</button>
+        </div>
+      </nav>
+
+      <main class="workspace">
+        <aside class="left-pane" aria-label="圖片縮圖選單">
+          <div class="pane-head image-pane-head">
+            <div class="image-pane-title">
+              <h2>圖片</h2>
+              <span id="imageCount" class="image-count">0 / 0</span>
+            </div>
+            <div class="pane-actions image-pane-actions">
+              <button id="addImage" class="small has-icon" title="從檔案加入圖片"><svg class="button-icon" aria-hidden="true"><use href="#icon-plus"></use></svg>新增圖片</button>
+              <button id="addImageFolder" class="small has-icon" title="從資料夾加入所有支援圖片"><svg class="button-icon" aria-hidden="true"><use href="#icon-folder-open"></use></svg>匯入資料夾</button>
+              <button id="deleteImage" class="small ghost has-icon" title="將目前圖片移到輸出資料夾的回收區"><svg class="button-icon" aria-hidden="true"><use href="#icon-trash"></use></svg>刪除圖片</button>
+              <button id="deleteAllImages" class="small ghost has-icon" title="將所有圖片移到輸出資料夾的回收區"><svg class="button-icon" aria-hidden="true"><use href="#icon-trash"></use></svg>刪除全部</button>
+            </div>
+          </div>
+          <input id="addImageInput" type="file" accept="image/*" multiple hidden />
+          <input id="addImageFolderInput" type="file" accept="image/*" multiple webkitdirectory directory hidden />
+          <div id="imageList" class="image-list" role="listbox" aria-label="圖片縮圖"></div>
+        </aside>
+
+        <section class="stage-pane">
+          <div class="viewbar" role="tablist" aria-label="檢視模式">
+            <button class="view-tab has-icon active" data-view="sideBySide" title="並排查看原圖與處理結果"><svg class="button-icon" aria-hidden="true"><use href="#icon-layers"></use></svg>並排</button>
+            <button class="view-tab has-icon" data-view="compare" title="拖曳分界線前後對比原圖與處理結果"><svg class="button-icon" aria-hidden="true"><use href="#icon-split"></use></svg>對比</button>
+            <button class="view-tab has-icon" data-view="original" title="只查看原始圖片"><svg class="button-icon" aria-hidden="true"><use href="#icon-image"></use></svg>原圖</button>
+            <button class="view-tab has-icon" data-view="result" title="只查看處理結果"><svg class="button-icon" aria-hidden="true"><use href="#icon-image-check"></use></svg>結果</button>
+            <span class="spacer"></span>
+            <button class="tool-button icon-button active" data-tool="pan" title="拖曳移動畫布" aria-label="拖曳移動畫布">
+              <svg class="tool-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <path d="M18 11V6a2 2 0 0 0-4 0v4" />
+                <path d="M14 10V4a2 2 0 0 0-4 0v8" />
+                <path d="M10 12V6a2 2 0 0 0-4 0v8" />
+                <path d="M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-1.8a8 8 0 0 1-5.6-2.3l-3.2-3.2a2 2 0 0 1 2.8-2.8L8 15.5" />
+              </svg>
+            </button>
+            <button class="tool-button has-icon" data-tool="brush" title="在目前圖片上新增遮罩範圍"><svg class="button-icon" aria-hidden="true"><use href="#icon-brush"></use></svg>遮罩筆刷</button>
+            <button class="tool-button has-icon" data-tool="eraser" title="從目前遮罩中擦除範圍"><svg class="button-icon" aria-hidden="true"><use href="#icon-eraser"></use></svg>遮罩橡皮擦</button>
+            <button class="tool-button has-icon" data-tool="restore" title="把指定區域還原成原圖"><svg class="button-icon" aria-hidden="true"><use href="#icon-restore"></use></svg>還原筆刷</button>
+            <span id="zoomLabel" class="zoom-label">100%</span>
+          </div>
+          <div id="canvasFrame" class="canvas-frame">
+            <canvas id="editorCanvas"></canvas>
+            <div id="brushCursor" class="brush-cursor" hidden></div>
+            <div id="emptyState" class="empty-state">尚未載入圖片</div>
+          </div>
+        </section>
+
+        <aside class="right-pane">
+          <section class="panel-section">
+            <h2 title="選擇要用模板或 SAM3 找水印">偵測模式</h2>
+            <div class="segmented-control" role="group" aria-label="偵測模式">
+              <button class="mode-button active" data-detector="sam3" type="button" title="用 SAM3.1 文字提示直接找水印和遮罩，需要 CUDA 顯卡">SAM3</button>
+              <button class="mode-button" data-detector="template" type="button" title="用水印模板找水印位置，並使用模板輪廓產生遮罩">模板</button>
+            </div>
+            <div id="templateSettingsPanel" class="detector-settings-panel" hidden>
+              <details id="templateSettingsDetails" class="settings-details">
+                <summary title="展開或收合模板偵測的細部參數">
+                  <span>模板進階參數</span>
+                  <small>偵測、遮罩</small>
+                </summary>
+                <div class="ai-settings-grid">
+                <div class="settings-subtitle">偵測</div>
+                <label class="ai-setting-row" title="模板候選的初步相似度門檻；最終接受仍會經過 profile（類型）分數、風險扣分與複檢">
+                  <span title="模板候選的初步相似度門檻；最終接受仍會經過 profile（類型）分數、風險扣分與複檢">候選初篩</span>
+                  <input id="templateScoreThreshold" type="number" min="0.05" max="1" step="0.01" value="0.50" />
+                </label>
+                <label class="ai-setting-row" title="限制每張圖最多保留幾個模板偵測結果">
+                  <span title="限制每張圖最多保留幾個模板偵測結果">最多區域</span>
+                  <input id="templateMaxDetections" type="number" min="1" max="240" step="1" value="96" />
+                </label>
+                <label class="ai-setting-row" title="允許模板縮到原本大小的多少倍">
+                  <span title="允許模板縮到原本大小的多少倍">最小縮放</span>
+                  <input id="templateMinScale" type="number" min="0.05" max="5" step="0.05" value="1.00" />
+                </label>
+                <label class="ai-setting-row" title="允許模板放到原本大小的多少倍">
+                  <span title="允許模板放到原本大小的多少倍">最大縮放</span>
+                  <input id="templateMaxScale" type="number" min="0.05" max="5" step="0.05" value="1.00" />
+                </label>
+                <label class="ai-setting-row" title="縮放搜尋的間隔；越小越細，但偵測越慢">
+                  <span title="縮放搜尋的間隔；越小越細，但偵測越慢">縮放步距</span>
+                  <input id="templateScaleStep" type="number" min="0.01" max="1" step="0.01" value="0.05" />
+                </label>
+                <label class="ai-setting-row" title="重疊框的合併門檻；越低越容易合併相近結果">
+                  <span title="重疊框的合併門檻；越低越容易合併相近結果">重疊合併</span>
+                  <input id="templateNmsIouThreshold" type="number" min="0.01" max="1" step="0.01" value="0.30" />
+                </label>
+                <label class="ai-setting-row" title="輪廓要多像模板；可補位低相似度候選，越高越保守">
+                  <span title="輪廓要多像模板；可補位低相似度候選，越高越保守">邊緣門檻</span>
+                  <input id="templateEdgeScoreThreshold" type="number" min="0.01" max="1" step="0.01" value="0.30" />
+                </label>
+                <label class="ai-setting-row" title="顏色要多像模板；主要用在彩色模板和色彩救援">
+                  <span title="顏色要多像模板；主要用在彩色模板和色彩救援">色彩門檻</span>
+                  <input id="templateColorScoreThreshold" type="number" min="0.01" max="1" step="0.01" value="0.55" />
+                </label>
+                <label class="ai-setting-row" title="模板有效區域的明暗形狀要多吻合；常用於複檢低分候選">
+                  <span title="模板有效區域的明暗形狀要多吻合；常用於複檢低分候選">形狀複檢</span>
+                  <input id="templateSupportCorrelationThreshold" type="number" min="0.01" max="1" step="0.01" value="0.12" />
+                </label>
+                <div class="settings-subtitle">遮罩</div>
+                <label class="ai-setting-row" title="模板產生的遮罩向外擴幾個像素。調大可減少水印邊緣殘留；調太大會多擦到背景。">
+                  <span title="模板產生的遮罩向外擴幾個像素。調大可減少水印邊緣殘留；調太大會多擦到背景。">遮罩外擴</span>
+                  <input id="templateMaskDilateIterations" type="number" min="0" max="64" step="1" value="10" />
+                </label>
+                <label class="ai-setting-row" title="用 mask body 最短邊比例限制外擴寬度。調小會更保守；設為 0 則只使用固定外擴像素。">
+                  <span title="用 mask body 最短邊比例限制外擴寬度。調小會更保守；設為 0 則只使用固定外擴像素。">外擴比例上限</span>
+                  <input id="templateMaskDilateMaxBodyRatio" type="number" min="0" max="1" step="0.01" value="0.10" />
+                </label>
+                <label class="ai-setting-row" title="遮罩邊緣柔化程度。調大可讓邊緣比較自然；調太大可能影響附近細節。">
+                  <span title="遮罩邊緣柔化程度。調大可讓邊緣比較自然；調太大可能影響附近細節。">邊緣柔化</span>
+                  <input id="templateMaskEdgeFeatherPixels" type="number" min="0" max="16" step="0.5" value="2.00" />
+                </label>
+                <label class="ai-setting-row setting-toggle-row" title="把同一個水印的破碎區域盡量補成完整本體。適合有字洞、黑色塊或半透明大面積水印。">
+                  <span title="把同一個水印的破碎區域盡量補成完整本體。適合有字洞、黑色塊或半透明大面積水印。">填滿本體</span>
+                  <input id="templateMaskUnifyBody" type="checkbox" checked />
+                </label>
+                <label class="ai-setting-row setting-toggle-row" title="實驗功能：模板偵測出框後，再用 SAM3 依框修正遮罩。失敗時會回退模板遮罩。">
+                  <span title="實驗功能：模板偵測出框後，再用 SAM3 依框修正遮罩。失敗時會回退模板遮罩。">SAM3 修正遮罩</span>
+                  <input id="templateSam3RefineMask" type="checkbox" />
+                </label>
+                <label class="ai-setting-row" title="把接近的遮罩碎片接起來並補小洞。調大可補破碎筆畫；調太大可能吞進背景。">
+                  <span title="把接近的遮罩碎片接起來並補小洞。調大可補破碎筆畫；調太大可能吞進背景。">補洞接縫</span>
+                  <input id="templateMaskContourClosePixels" type="number" min="0" max="32" step="0.5" value="3.00" />
+                </label>
+                <label class="ai-setting-row" title="填滿本體時允許多寬的空隙被視為同一個水印。一般不需要調；越大越寬鬆。">
+                  <span title="填滿本體時允許多寬的空隙被視為同一個水印。一般不需要調；越大越寬鬆。">本體寬鬆度</span>
+                  <input id="templateMaskBodyGapRatio" type="number" min="0" max="0.5" step="0.01" value="0.05" />
+                </label>
+                <div class="settings-actions">
+                  <button id="resetTemplateSettings" class="small ghost has-icon" type="button" title="將模板進階參數重置為預設值"><svg class="button-icon" aria-hidden="true"><use href="#icon-restore"></use></svg>重置</button>
+                  <button id="saveTemplateSettings" class="small has-icon" type="button" title="保存目前模板進階參數，下次開啟時自動套用"><svg class="button-icon" aria-hidden="true"><use href="#icon-save"></use></svg>保存設定</button>
+                </div>
+                </div>
+              </details>
+            </div>
+            <div id="aiSettingsPanel">
+              <label id="aiPromptRow" class="ai-prompt-row" title="告訴 SAM3.1 要找哪一類水印，可用句點分隔多個提示">
+                <span title="告訴 SAM3.1 要找哪一類水印，可用句點分隔多個提示">SAM3 提示</span>
+                <input id="aiPrompt" type="text" spellcheck="false" />
+              </label>
+              <details id="aiSettingsDetails" class="settings-details">
+                <summary title="展開或收合 SAM3 的細部參數">
+                  <span id="aiSettingsTitle">SAM3 進階參數</span>
+                  <small id="aiSettingsHint">模型門檻、遮罩、分塊</small>
+                </summary>
+                <div class="ai-settings-grid">
+                <div class="settings-subtitle">偵測</div>
+                <label class="ai-setting-row" title="SAM3 模型內部先篩一次的門檻。預設會先擋掉極低分結果，比較省記憶體；調高會更保守，但可能漏掉淡水印。只影響 SAM3 偵測模式。">
+                  <span title="SAM3 模型內部先篩一次的門檻。預設會先擋掉極低分結果，比較省記憶體；調高會更保守，但可能漏掉淡水印。只影響 SAM3 偵測模式。">模型信心</span>
+                  <input id="sam3ConfidenceThreshold" type="number" min="0" max="1" step="0.01" value="0.05" />
+                </label>
+                <label class="ai-setting-row" data-ai-scope="detect" title="SAM3 偵測模式用的框分數門檻。數值越高越保守，太低可能誤抓不是水印的區域。">
+                  <span id="aiBoxThresholdLabel" title="SAM3 偵測模式用的框分數門檻。數值越高越保守，太低可能誤抓不是水印的區域。">信心門檻</span>
+                  <input id="aiBoxThreshold" type="number" min="0.01" max="1" step="0.01" value="0.20" />
+                </label>
+                <label class="ai-setting-row" data-ai-scope="detect" title="SAM3 偵測模式用的篩選條件。限制單個偵測框最大能佔整張圖的比例。">
+                  <span title="SAM3 偵測模式用的篩選條件。限制單個偵測框最大能佔整張圖的比例。">最大面積</span>
+                  <input id="aiMaxBoxAreaRatio" type="number" min="0.01" max="1" step="0.01" value="0.35" />
+                </label>
+                <label class="ai-setting-row" data-ai-scope="detect" title="多個偵測框重疊到多少就合併成同一個。數值越低合併越積極；越高越容易保留相近或重複的框。只影響 SAM3 偵測模式。">
+                  <span title="多個偵測框重疊到多少就合併成同一個。數值越低合併越積極；越高越容易保留相近或重複的框。只影響 SAM3 偵測模式。">重疊合併</span>
+                  <input id="aiNmsIouThreshold" type="number" min="0.01" max="1" step="0.01" value="0.30" />
+                </label>
+                <label class="ai-setting-row" data-ai-scope="detect" title="SAM3 偵測模式用的上限。限制每張圖最多保留幾個偵測結果。">
+                  <span title="SAM3 偵測模式用的上限。限制每張圖最多保留幾個偵測結果。">最多區域</span>
+                  <input id="aiMaxDetections" type="number" min="1" max="96" step="1" value="60" />
+                </label>
+                <div class="settings-subtitle">遮罩</div>
+                <label class="ai-setting-row" title="SAM3 遮罩本身的門檻。調高比較保守但可能破洞；調低會保留更多遮罩範圍。">
+                  <span title="SAM3 遮罩本身的門檻。調高比較保守但可能破洞；調低會保留更多遮罩範圍。">遮罩門檻</span>
+                  <input id="aiMaskThreshold" type="number" min="0" max="1" step="0.05" value="0.00" />
+                </label>
+                <label class="ai-setting-row" title="SAM3 切出的遮罩最後向外擴張幾個像素。太小可能殘留水印邊緣；太大可能多擦到背景。">
+                  <span title="SAM3 切出的遮罩最後向外擴張幾個像素。太小可能殘留水印邊緣；太大可能多擦到背景。">遮罩擴張</span>
+                  <input id="aiMaskDilatePixels" type="number" min="0" max="64" step="1" value="3" />
+                </label>
+                <label class="ai-setting-row setting-toggle-row" title="如果 SAM3 沒有切出有效遮罩，就用偵測框補上。開啟較不容易漏掉，關閉較不容易留下方形擦除範圍。">
+                  <span title="如果 SAM3 沒有切出有效遮罩，就用偵測框補上。開啟較不容易漏掉，關閉較不容易留下方形擦除範圍。">用框補遮罩</span>
+                  <input id="aiFallbackToBoxes" type="checkbox" checked />
+                </label>
+                <div class="settings-subtitle">分塊</div>
+                <label class="ai-setting-row" title="SAM3 單次處理的小圖最長邊。SAM3 偵測模式會用它切大圖。調小較省顯存，調大較完整但更吃顯存。">
+                  <span title="SAM3 單次處理的小圖最長邊。SAM3 偵測模式會用它切大圖。調小較省顯存，調大較完整但更吃顯存。">處理邊長</span>
+                  <input id="sam3MaxSide" type="number" min="256" max="8192" step="64" value="2048" />
+                </label>
+                <label class="ai-setting-row" data-ai-scope="detect" title="大圖分塊彼此重疊的比例。調高較不容易切斷跨邊界水印，但會變慢、也會多跑一些區塊。只影響 SAM3 偵測模式。">
+                  <span title="大圖分塊彼此重疊的比例。調高較不容易切斷跨邊界水印，但會變慢、也會多跑一些區塊。只影響 SAM3 偵測模式。">分塊重疊</span>
+                  <input id="sam3TileOverlapRatio" type="number" min="0" max="0.8" step="0.01" value="0.20" />
+                </label>
+                <div class="settings-actions">
+                  <button id="resetAiSettings" class="small ghost has-icon" type="button" title="將 SAM3 進階參數重置為預設值"><svg class="button-icon" aria-hidden="true"><use href="#icon-restore"></use></svg>重置</button>
+                  <button id="saveAiSettings" class="small has-icon" type="button" title="保存目前 SAM3 進階參數，下次開啟時自動套用"><svg class="button-icon" aria-hidden="true"><use href="#icon-save"></use></svg>保存設定</button>
+                </div>
+                </div>
+              </details>
+            </div>
+          </section>
+
+          <section id="templatePanel" class="panel-section" hidden>
+            <div class="pane-head template-pane-head">
+              <h2>水印模板</h2>
+              <div class="pane-actions template-pane-actions">
+                <button id="addTemplate" class="small has-icon" title="從檔案匯入水印模板"><svg class="button-icon" aria-hidden="true"><use href="#icon-plus"></use></svg>匯入模板</button>
+                <button id="addTemplateFolder" class="small has-icon" title="從資料夾匯入所有支援模板"><svg class="button-icon" aria-hidden="true"><use href="#icon-folder-open"></use></svg>模板資料夾</button>
+                <button id="createTemplate" class="small has-icon" title="用目前遮罩建立模板。背景越單純、水印越清楚，後續偵測越穩。"><svg class="button-icon" aria-hidden="true"><use href="#icon-template"></use></svg>建立模板</button>
+              </div>
+            </div>
+            <input id="addTemplateInput" type="file" accept="image/*" multiple hidden />
+            <input id="addTemplateFolderInput" type="file" accept="image/*" multiple webkitdirectory directory hidden />
+            <div id="templateList" class="template-list"></div>
+          </section>
+
+          <section class="panel-section">
+            <h2>編輯工具</h2>
+            <label class="range-row">
+              <span>筆刷大小</span>
+              <input id="brushSize" type="range" min="4" max="160" value="36" />
+              <output id="brushSizeLabel">36</output>
+            </label>
+            <label class="range-row">
+              <span>縮放</span>
+              <input id="zoomRange" type="range" min="15" max="3000" value="100" />
+              <output id="zoomRangeLabel">100%</output>
+            </label>
+            <label class="keep-detections-row" title="預設不保留；勾選後去水印完成仍會顯示偵測框">
+              <input id="keepDetectionsAfterProcess" type="checkbox" />
+              <span>去水印後保留偵測框</span>
+            </label>
+            <button id="clearMask" class="wide has-icon" title="清除目前圖片的遮罩"><svg class="button-icon" aria-hidden="true"><use href="#icon-clear"></use></svg>清除遮罩</button>
+            <button id="clearAllMasks" class="wide ghost has-icon" title="清除所有圖片已儲存的遮罩"><svg class="button-icon" aria-hidden="true"><use href="#icon-layers"></use></svg>清除所有遮罩</button>
+            <button id="resetImage" class="wide ghost has-icon" title="還原目前圖片，清除偵測框、遮罩與去水印結果"><svg class="button-icon" aria-hidden="true"><use href="#icon-restore"></use></svg>還原目前圖片</button>
+            <button id="resetAllImages" class="wide ghost has-icon" title="還原所有圖片，清除偵測框、遮罩與去水印結果"><svg class="button-icon" aria-hidden="true"><use href="#icon-layers"></use></svg>還原所有圖片</button>
+          </section>
+
+          <section class="panel-section">
+            <div class="pane-head">
+              <h2 class="section-title-with-count">偵測結果 <span id="detectionCount" class="section-count" aria-label="偵測數量：0">0</span></h2>
+              <div class="pane-actions">
+                <button id="clearDetections" class="small ghost has-icon" title="清除目前圖片的偵測框"><svg class="button-icon" aria-hidden="true"><use href="#icon-clear"></use></svg>清除偵測框</button>
+                <button id="clearAllDetections" class="small ghost has-icon" title="清除所有圖片已儲存的偵測框"><svg class="button-icon" aria-hidden="true"><use href="#icon-layers"></use></svg>清除所有偵測框</button>
+              </div>
+            </div>
+            <div id="detectionList" class="detection-list"></div>
+          </section>
+        </aside>
+      </main>
+
+      <footer class="statusbar">
+        <span id="statusText">準備就緒</span>
+        <span id="processingTime" class="status-time">處理時間 --</span>
+        <span id="cursorCoordinates" class="status-coordinates">座標 --</span>
+        <div id="batchProgress" class="batch-progress" aria-live="polite" hidden>
+          <span id="batchProgressLabel">批量作業中</span>
+          <span class="batch-progress-track" aria-hidden="true">
+            <span id="batchProgressFill" class="batch-progress-fill"></span>
+          </span>
+          <span id="batchProgressMeta">0 秒</span>
+        </div>
+        <span id="imageMeta"></span>
+      </footer>
+    </div>
+    <div id="templatePreviewModal" class="template-preview-modal" hidden>
+      <button id="templatePreviewBackdrop" class="template-preview-backdrop" type="button" aria-label="關閉模板預覽" tabindex="-1"></button>
+      <section class="template-preview-panel" role="dialog" aria-modal="true" aria-labelledby="templatePreviewTitle" tabindex="-1">
+        <header class="template-preview-head">
+          <div class="template-preview-title-wrap">
+            <strong id="templatePreviewTitle">模板</strong>
+            <span id="templatePreviewMode">原始模板</span>
+          </div>
+          <div class="template-preview-controls">
+            <div class="segmented-control template-preview-mode-control" role="group" aria-label="模板預覽模式">
+              <button id="templatePreviewOriginal" class="mode-button active" type="button" title="查看原始模板">原圖</button>
+              <button id="templatePreviewMask" class="mode-button" type="button" title="查看遮罩預覽">遮罩</button>
+            </div>
+            <button id="templatePreviewZoomOut" class="icon-button" type="button" title="縮小" aria-label="縮小">
+              <svg class="button-icon" aria-hidden="true"><use href="#icon-zoom-out"></use></svg>
+            </button>
+            <span id="templatePreviewZoomLabel" class="template-preview-zoom-label">100%</span>
+            <button id="templatePreviewZoomIn" class="icon-button" type="button" title="放大" aria-label="放大">
+              <svg class="button-icon" aria-hidden="true"><use href="#icon-zoom-in"></use></svg>
+            </button>
+            <button id="templatePreviewZoomReset" class="small ghost" type="button" title="重置縮放">100%</button>
+            <button id="templatePreviewClose" class="icon-button ghost" type="button" title="關閉" aria-label="關閉">
+              <svg class="button-icon" aria-hidden="true"><use href="#icon-clear"></use></svg>
+            </button>
+          </div>
+        </header>
+        <div id="templatePreviewViewport" class="template-preview-viewport">
+          <div id="templatePreviewSurface" class="template-preview-surface">
+            <img id="templatePreviewImage" class="template-preview-image" alt="" draggable="false" />
+          </div>
+        </div>
+      </section>
+    </div>
+    <script type="module" src="/static/app.js"></script>
+  </body>
+</html>

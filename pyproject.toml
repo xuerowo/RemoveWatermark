@@ -1,0 +1,67 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "remove-watermark"
+version = "0.1.0"
+description = "CLI watermark removal tool based on template matching and LaMa inpainting."
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "numpy>=1.24",
+    "opencv-python>=4.8",
+    "Pillow>=9.5,<11.0",
+    "simple-lama-inpainting>=0.1.2",
+]
+
+[project.optional-dependencies]
+ai = [
+    "einops>=0.8",
+    "modelscope>=1.29",
+    "psutil>=5.9",
+    "pycocotools>=2.0.10",
+    "sam3 @ git+https://github.com/facebookresearch/sam3.git@5dd401d1c5c1d5c3eedff06d41b77af824517619",
+    "setuptools<81",
+    "triton-windows; sys_platform == 'win32'",
+]
+dev = [
+    "pytest>=8.0",
+    "pytest-xdist>=3.6",
+    "ruff>=0.8",
+]
+
+[project.scripts]
+remove-watermark = "remove_watermark.cli:run"
+remove-watermark-ui = "remove_watermark.web:run"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+remove_watermark = ["web_static/*", "web_static/assets/*"]
+
+[tool.pytest.ini_options]
+addopts = [
+    "-m",
+    "not slow and not exhaustive and not image_regression",
+]
+testpaths = ["tests"]
+markers = [
+    "image_regression: full-image fixture regressions; run explicitly when checking detector quality",
+    "slow: image-heavy regression tests that are useful before release but slower during local iteration",
+    "false_positive: slow detector checks that guard against emitting unrelated detections",
+    "false_negative: slow detector checks that guard against missing expected detections",
+    "cross_dataset: slow detector checks that exercise templates against another fixture dataset",
+    "performance: slow detector checks with broad or expensive coverage useful for performance-sensitive validation",
+    "exhaustive: full cross-dataset image sweeps; run explicitly when broad regression coverage is needed",
+]
+
+[tool.ruff.lint.per-file-ignores]
+"RemoveWatermark_Colab.ipynb" = [
+    "E402", # Colab parameter cells intentionally keep #@param assignments before imports.
+    "F821", # ui_process may exist from a previous notebook run before the launch cell reassigns it.
+]

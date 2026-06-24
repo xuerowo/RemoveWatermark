@@ -1,0 +1,51 @@
+# Python cache and build artifacts
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+/.cache/
+build/
+dist/
+*.egg-info/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Local outputs and debug runs
+out/
+output/
+/input/
+/input2/
+/input3/
+/input4/
+/templates/
+tmp/*
+!tmp/.gitkeep
+.codex_check*/
+.codex_diag/
+.codex_probe*/
+
+# Local planning documents
+/PLAN.md
+/PROGRESS_LOG.md
+
+# Local test and evaluation files
+/tests/
+/scripts/benchmark_detection.py
+/scripts/evaluate_detection.py
+/scripts/evaluate_masks.py
+/src/remove_watermark/benchmark_detection.py
+/src/remove_watermark/evaluation.py
+/src/remove_watermark/evidence_metrics.py
+/src/remove_watermark/mask_evaluation.py
+
+# OS and editor files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
