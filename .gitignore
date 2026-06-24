@@ -31,6 +31,7 @@ tmp/*
 .codex_probe*/
 
 # Local planning documents
+/AGENTS.md
 /PLAN.md
 /PROGRESS_LOG.md
 
