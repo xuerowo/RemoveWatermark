@@ -8,13 +8,18 @@ LaMa 是去水印時用的補圖模型。第一次執行時，相關套件可能
 
 - `src/remove_watermark/`：主要程式碼。
 - `remove_watermark/`：讓 `python -m remove_watermark` 可以在本機執行的入口。
+- `scripts/setup-venv.ps1`：PowerShell 安裝腳本。
+- `setup-venv.bat`：Windows 雙擊安裝入口。
+- `start-ui.bat`：Windows 雙擊啟動 Web UI。
+- `RemoveWatermark_Colab.ipynb`：Google Colab 筆記本。
+- `COLAB.md`：Google Colab 使用說明。
+
+下面這些是本機工作資料夾，會被 `.gitignore` 排除，不會放進公開倉庫：
+
 - `input/`：預設輸入圖片資料夾。
 - `templates/`：水印模板資料夾。
-- `output/`：預設輸出圖片資料夾，通常不放進版本管理。
-- `tmp/`：本機暫存檔，通常不放進版本管理。
-- `scripts/`：安裝與輔助腳本。
-- `tests/`：自動測試。
-- `tests/fixtures/input/`：測試用固定範例圖片。
+- `output/`：預設輸出圖片資料夾。
+- `tmp/`：本機暫存檔。
 
 ## 安裝環境
 
@@ -62,132 +67,11 @@ setup-venv.bat -InstallAiTools -DownloadAiModels
 
 如果只想基本安裝，雙擊 `setup-venv.bat` 後選第 1 項，或直接執行上面的 `scripts\setup-venv.ps1`。
 
-如果只想安裝執行必要套件，不安裝測試工具和程式檢查工具：
+如果只想安裝執行必要套件，不安裝開發輔助工具：
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File scripts\setup-venv.ps1 -SkipDevTools
 ```
-
-## 執行測試
-
-日常開發預設跑快速測試，會排除較慢的真圖片回歸、慢速測試和完整資料集掃描：
-
-```powershell
-.\.venv\Scripts\python.exe -m pytest
-```
-
-日常提交前也建議跑靜態檢查：
-
-```powershell
-.\.venv\Scripts\python.exe -m ruff check .
-```
-
-如果要檢查偵測品質相關的真圖片回歸測試：
-
-```powershell
-.\.venv\Scripts\python.exe -m pytest -m image_regression -n auto
-```
-
-慢速偵測評估可以依目的分開跑。`false_positive` 是誤判防線，`false_negative` 是漏判防線，`cross_dataset` 是跨資料集檢查，`performance` 是較大範圍或較花時間的檢查：
-
-```powershell
-.\.venv\Scripts\python.exe -m pytest -m "slow and false_positive" -n auto
-.\.venv\Scripts\python.exe -m pytest -m "slow and false_negative" -n auto
-.\.venv\Scripts\python.exe -m pytest -m "slow and cross_dataset" -n auto
-.\.venv\Scripts\python.exe -m pytest -m "slow and performance" -n auto
-```
-
-發版前或大幅調整偵測演算法時，請至少跑完整非 exhaustive 測試：
-
-```powershell
-.\.venv\Scripts\python.exe -m pytest -m "not exhaustive" -n auto
-```
-
-如果這次改到偵測門檻、遮罩邏輯或測試素材，發版前也要另外跑圖片回歸測試：
-
-```powershell
-.\.venv\Scripts\python.exe -m pytest -m image_regression -n auto
-```
-
-完整跨資料集掃描只在大幅調整演算法或準備重要版本時執行：
-
-```powershell
-.\.venv\Scripts\python.exe -m pytest -m exhaustive -n auto
-```
-
-## 演算法評估報表
-
-調整偵測門檻或遮罩策略前，建議先建立評估 manifest。Manifest 是 JSON 格式的案例清單，包含圖片、模板和預期框：
-
-```json
-{
-  "cases": [
-    {
-      "image": "tests/fixtures/local_input/ai_clean_01.png",
-      "templates": ["tests/fixtures/templates/watermark_black.png"],
-      "expectedBoxes": [
-        { "bbox": [756, 281, 360, 96] }
-      ]
-    }
-  ]
-}
-```
-
-Manifest 內的相對路徑會以 manifest 檔案所在資料夾為基準。`expectedBoxes` 可以只填 `bbox`；如果同一個案例使用多個模板，則每個預期框都必須加上 `template`，才能分模板統計命中與漏判。
-
-產生 JSON 與 CSV 報表：
-
-```powershell
-.\.venv\Scripts\python.exe scripts\evaluate_detection.py --manifest eval-manifest.json --output-json output\eval-report.json --output-csv output\eval-report.csv
-```
-
-JSON 報表會包含整體摘要、每張圖片、每個模板的候選數、去重後候選數、偵測數、耗時、TP/FP/FN 和每個偵測框的最佳 IoU。CSV 報表會攤平成每模板/每偵測一列，方便用試算表排序與篩選。TP 是命中，FP 是誤判，FN 是漏判，IoU 是偵測框與預期框的重疊率。
-
-如果要分析候選為何被接受或拒絕，可以加上候選診斷：
-
-```powershell
-.\.venv\Scripts\python.exe scripts\evaluate_detection.py --manifest eval-manifest.json --output-json output\eval-report.json --include-candidates
-```
-
-候選診斷會寫在 JSON 的 `candidateDiagnostics`，包含候選來源、尺度、`score`、`gray_score`、`edge_score`、`color_score`、接受/拒絕狀態，以及擋下候選的 guard 原因。
-
-## 模板偵測 benchmark
-
-要比較不同模板數、尺度設定與圖片尺寸的偵測耗時，可以使用 benchmark 工具。專案內有一份小型範例：
-
-```powershell
-.\.venv\Scripts\python.exe scripts\benchmark_detection.py --manifest tests\fixtures\benchmark_detection_manifest.json --output-json output\benchmark-detection\summary.json --output-csv output\benchmark-detection\summary.csv
-```
-
-Manifest 可設定 `variants` 與 `cases`。`variants` 控制 `minScale`、`maxScale`、`scaleStep` 與 `repeats`；`cases` 控制圖片、單模板/多模板，以及可選的 `maxSide` 縮圖尺寸。JSON 報表會輸出每個組合的 `medianElapsedMs`、`meanElapsedMs`、候選數、去重候選數、偵測數、圖片尺寸、模板數與尺度數，並依 variant 與模板數彙整；摘要中的 `meanElapsedMs` 會依 `repeats` 加權。CSV 報表方便用試算表比較前後版本。
-
-`output/` 已被 `.gitignore` 排除。benchmark 產物請留在本機比較，不要提交大型輸出。
-
-## 遮罩品質評估
-
-調整遮罩 body 或膨脹策略前，可以用 mask evaluation 產生視覺 artifact。Manifest 格式和偵測評估相同：
-
-```powershell
-.\.venv\Scripts\python.exe scripts\evaluate_masks.py --manifest mask-eval-manifest.json --output-dir output\mask-eval
-```
-
-每個案例會依 manifest 順序輸出到 `001_<檔名>` 這類資料夾，避免同檔名圖片互相覆蓋。內容包含偵測框、原圖/結果對照、LaMa mask 疊圖、mask body 疊圖、body source、mask body、LaMa mask、cleanup change（變更熱區）與 patch compare（局部比較），並寫入 `summary.json` 和各案例的 `state.json`。
-
-如果要評估實驗性的 SAM3 refine 是否值得保留，可以在有 CUDA/SAM3 的環境加上比較參數：
-
-```powershell
-.\.venv\Scripts\python.exe scripts\evaluate_masks.py --manifest mask-eval-manifest.json --output-dir output\mask-eval-sam3 --compare-sam3-refine
-```
-
-專案內也有一份低對比黑色水印的範例 manifest：
-
-```powershell
-.\.venv\Scripts\python.exe scripts\evaluate_masks.py --manifest tests\fixtures\sam3_refine_eval_manifest.json --output-dir output\sam3-refine-eval --compare-sam3-refine
-```
-
-這會在每個案例的 `state.json` 增加 `sam3RefineComparison`，並在 `summary.json` 增加 `sam3Refine` 摘要。重點欄位包含 baseline/refined 遮罩像素數、交集/聯集、IoU（遮罩重疊率）、refined-only、missed-baseline、baseline/refine 耗時與失敗原因。摘要中的 `failureRate` 只計算實際嘗試 SAM3 refine 的案例；沒有偵測框的 `skipped` 案例會另外計數，不會稀釋失敗率或耗時中位數。只有在這份報表顯示遮罩品質或人工修正量明顯改善，且失敗率可接受時，才應把 SAM3 refine 納入正式功能。
-
-目前本機報表在 3 個代表案例中 `attemptedCount=3`、`failureCount=3`、`failureRate=1.0`，原因是缺少 Meta `sam3` 套件；因此 SAM3 refine 不升格為正式功能，維持預設關閉的實驗選項。這個結論限於本機缺少 `sam3` 的環境，不代表已驗證真實 SAM3 遮罩品質。
 
 ## Google Colab 使用
 
